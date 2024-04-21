@@ -5,7 +5,9 @@ import com.homehero.servicios.models.Servicio;
 import com.homehero.servicios.repositories.CotizacionRepository;
 import com.homehero.servicios.repositories.ServicioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +41,12 @@ public class Services {
         return repositoryCotizacion.save(cotizacion);
     }
 
-    public Servicio createServicio(Servicio servicio){
+    public Servicio createServicio(Servicio servicio) {
+        int idCotizacion = servicio.getId_cotizacion();
+        if (!repositoryCotizacion.existsById(idCotizacion)) {
+            // Aquí devolvemos un mensaje de error en lugar de lanzar una excepción
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El id_cotizacion no corresponde a una cotización existente.");
+        }
         return repositoryServicio.save(servicio);
     }
 
