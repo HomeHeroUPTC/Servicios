@@ -1,84 +1,52 @@
 package com.homehero.servicios.services;
 
-import com.homehero.servicios.models.Cotizacion;
-import com.homehero.servicios.models.Servicio;
-import com.homehero.servicios.repositories.CotizacionRepository;
-import com.homehero.servicios.repositories.ServicioRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.homehero.servicios.DTOServicios.HeroMyServicesDTO;
+import com.homehero.servicios.models.Service;
+import com.homehero.servicios.repositories.ServiceRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.Objects;
 
-@Service
+@org.springframework.stereotype.Service
 public class Services {
 
     @Autowired
-    private CotizacionRepository repositoryCotizacion;
+    private ServiceRepository repositoryService;
 
     @Autowired
-    private ServicioRepository repositoryServicio;
+    private EntityManager entityManager;
 
-    public List<Cotizacion> getAllCotizaciones(){
-        return repositoryCotizacion.findAll();
-    }
-
-    public List<Servicio> getAllServicios(){
-        return repositoryServicio.findAll();
-    }
-
-    public Optional<Cotizacion> getCotizacionesById(int id){
-        return repositoryCotizacion.findById(id);
-    }
-
-    public Optional<Servicio> getServiciosById(int id){
-        return repositoryServicio.findById(id);
-    }
-
-    public Cotizacion createCotizacion(Cotizacion cotizacion){
-        return repositoryCotizacion.save(cotizacion);
-    }
-
-    public Servicio createServicio(Servicio servicio) {
-        int idCotizacion = servicio.getId_cotizacion();
-        if (!repositoryCotizacion.existsById(idCotizacion)) {
-            // Aquí devolvemos un mensaje de error en lugar de lanzar una excepción
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El id_cotizacion no corresponde a una cotización existente.");
+    public List<Service> getServices(String keyword) throws JsonProcessingException {
+        String q = "";
+        if(Objects.equals(keyword, "")) {
+            q = "SELECT s FROM Service s ORDER BY s.hero_quantity";
+        }else {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, String> jsonMap = objectMapper.readValue(keyword, Map.class);
+            String filterValue = jsonMap.get("filter");
+            q = String.format("SELECT s FROM Service s WHERE s.title LIKE '%%%s%%' ORDER BY s.hero_quantity", filterValue);
         }
-        return repositoryServicio.save(servicio);
+        TypedQuery<Service> query = entityManager.createQuery(q, Service.class);
+        return query.getResultList();
     }
 
-    public Optional<Cotizacion> updateCotizacion(int id, Cotizacion cotizacion){
-        if (!repositoryCotizacion.existsById(id)){
-            return Optional.empty();
-        }
-        cotizacion.setId_cotizacion(id);
-        return Optional.of(repositoryCotizacion.save(cotizacion));
+    public List<Service> getHeroServices() {
+        return repositoryService.findAll();
     }
 
-    public Optional<Servicio> updateServicio(int id, Servicio servicio){
-        if (!repositoryServicio.existsById(id)){
-            return Optional.empty();
-        }
-        servicio.setId_cotizacion(id);
-        return Optional.of(repositoryServicio.save(servicio));
-    }
-
-    public boolean deletedCotizacion(int id){
-        if (!repositoryCotizacion.existsById(id)){
-            return false;
-        }
-        repositoryCotizacion.deleteById(id);
-        return true;
-    }
-
-    public boolean deletedServicio(int id){
-        if (!repositoryServicio.existsById(id)){
-            return false;
-        }
-        repositoryServicio.deleteById(id);
-        return true;
+    @Transactional
+    public void updateHeroCounter(int id) {
+        String q = String.format("UPDATE Service s SET s.hero_quantity = s.hero_quantity + 1 WHERE s.id = %s", id);
+        Query query = entityManager.createQuery(q);
+        query.executeUpdate();
     }
 }
