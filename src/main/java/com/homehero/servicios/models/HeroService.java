@@ -22,7 +22,7 @@ public class HeroService {
     private String image_url;
 
     @Column(nullable = false, length = 100)
-    private int hero_id;
+    private int hero_id;//pasar el nombre
 
     @Column(nullable = false)
     private int price;
@@ -38,7 +38,7 @@ public class HeroService {
 
     @ManyToOne
     @JoinColumn(name = "service_id", nullable = false)
-    private Service service_id;
+    private Service service_id;//pasar el nombre
     //barrio.
     //dias disponibles.
     //horas de trabajo.

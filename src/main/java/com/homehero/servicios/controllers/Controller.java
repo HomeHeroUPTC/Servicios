@@ -2,6 +2,7 @@ package com.homehero.servicios.controllers;
 
 import com.homehero.servicios.DTOServicios.HeroMyServicesDTO;
 import com.homehero.servicios.DTOServicios.HeroServiceDTO;
+import com.homehero.servicios.DTOServicios.HeroServiceFeedDTO;
 import com.homehero.servicios.models.ErrorResponse;
 import com.homehero.servicios.models.Service;
 import com.homehero.servicios.services.HeroServices;
@@ -33,9 +34,9 @@ public class Controller {
     }
 
     @GetMapping(value = "/GetHeroServices")
-    public ResponseEntity<?> GetHeroServices(@RequestBody String filter) {
+    public ResponseEntity<?> GetHeroServices(@RequestBody String service_id) {
         try {
-            List<Service> services = serviceService.getHeroServices();
+            List<HeroServiceFeedDTO> services = heroServices.getHeroServicesByServiceId(service_id);
             return new ResponseEntity<>(services, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(new ErrorResponse("An error occurred while fetching services: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
