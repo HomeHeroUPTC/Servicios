@@ -5,7 +5,9 @@ import com.homehero.servicios.DTOServicios.HeroMyServicesDTO;
 import com.homehero.servicios.models.Service;
 import com.homehero.servicios.repositories.ServiceRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -41,4 +43,10 @@ public class Services {
         return repositoryService.findAll();
     }
 
+    @Transactional
+    public void updateHeroCounter(int id) {
+        String q = String.format("UPDATE Service s SET s.hero_quantity = s.hero_quantity + 1 WHERE s.id = %s", id);
+        Query query = entityManager.createQuery(q);
+        query.executeUpdate();
+    }
 }

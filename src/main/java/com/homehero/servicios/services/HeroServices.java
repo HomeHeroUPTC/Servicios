@@ -3,16 +3,16 @@ package com.homehero.servicios.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.homehero.servicios.DTOServicios.HeroMyServicesDTO;
+import com.homehero.servicios.DTOServicios.HeroServiceDTO;
+import com.homehero.servicios.models.HeroService;
 import com.homehero.servicios.models.Service;
 import com.homehero.servicios.repositories.HeroServiceRepository;
+import com.homehero.servicios.repositories.ServiceRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @org.springframework.stereotype.Service
 public class HeroServices {
@@ -22,6 +22,10 @@ public class HeroServices {
 
     @Autowired
     private EntityManager entityManager;
+    @Autowired
+    private HeroServiceRepository heroServiceRepository;
+    @Autowired
+    private ServiceRepository serviceRepository;
 
     public List<HeroMyServicesDTO> getMyServices(String heroid) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -50,5 +54,18 @@ public class HeroServices {
             heroServiceList.add(dto);
         }
         return heroServiceList;
+    }
+    public void CreateHeroService(HeroServiceDTO newService) {
+        HeroService createdService = new HeroService();
+        Optional<Service> service_type = serviceRepository.findById(newService.getService_id());
+        createdService.setService_id(service_type.get());
+        createdService.setHero_id(newService.getHero_id());
+        createdService.setService_count(0);
+        createdService.setPrice(newService.getPrice());
+        createdService.setDescription(newService.getDescription());
+        createdService.setRating(0);
+        createdService.setImage_url(service_type.get().getImage_url());
+        createdService.setTitle(newService.getName());
+        heroServiceRepository.save(createdService);
     }
 }

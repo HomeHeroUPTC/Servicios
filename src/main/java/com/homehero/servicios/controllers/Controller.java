@@ -53,8 +53,14 @@ public class Controller {
     }
 
     @PostMapping(value = "/CreateHeroService")
-    public ResponseEntity<Service> CreateHeroService(@RequestBody HeroServiceDTO service){
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<?> CreateHeroService(@RequestBody HeroServiceDTO service){
+        try {
+            heroServices.CreateHeroService(service);
+            serviceService.updateHeroCounter(service.getService_id());
+            return new ResponseEntity<>(service.getService_id(), HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ErrorResponse("An error occurred while fetching services: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }
