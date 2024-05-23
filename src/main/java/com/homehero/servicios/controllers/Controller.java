@@ -24,7 +24,7 @@ public class Controller {
     private HeroServices heroServices;
 
     @GetMapping(value = "/GetServices")
-    public ResponseEntity<?> getServices(@RequestBody String filter) {
+    public ResponseEntity<?> getServices(@RequestParam String filter) {
         try {
             List<Service> services = serviceService.getServices(filter);
             return new ResponseEntity<>(services, HttpStatus.OK);
@@ -34,7 +34,7 @@ public class Controller {
     }
 
     @GetMapping(value = "/GetHeroServices")
-    public ResponseEntity<?> GetHeroServices(@RequestBody String service_id) {
+    public ResponseEntity<?> GetHeroServices(@RequestParam String service_id) {
         try {
             List<HeroServiceFeedDTO> services = heroServices.getHeroServicesByServiceId(service_id);
             return new ResponseEntity<>(services, HttpStatus.OK);
@@ -44,7 +44,7 @@ public class Controller {
     }
 
     @GetMapping(value = "/GetMyServices")
-    public ResponseEntity<?> GetMyServices(@RequestBody String hero_id) {
+    public ResponseEntity<?> GetMyServices(@RequestParam  String hero_id) {
         try {
             List<HeroMyServicesDTO> services = heroServices.getMyServices(hero_id);
             return new ResponseEntity<>(services, HttpStatus.OK);
