@@ -29,12 +29,8 @@ public class HeroServices {
     @Autowired
     private ServiceRepository serviceRepository;
 
-    public List<HeroMyServicesDTO> getMyServices(String heroid) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, String> jsonMap = objectMapper.readValue((heroid), Map.class);
-        int jsonHeroId = Integer.parseInt(jsonMap.get("hero_id"));
-
-        String q = String.format("SELECT hs.id, hs.title, hs.image_url, hs.price, hs.description, s.title as type from HeroService hs JOIN Service s on hs.service_id.service_id = s.service_id where hs.hero_id = %s", jsonHeroId);
+    public List<HeroMyServicesDTO> getMyServices(int heroid) {
+        String q = String.format("SELECT hs.id, hs.title, hs.image_url, hs.price, hs.description, s.title as type from HeroService hs JOIN Service s on hs.service_id.service_id = s.service_id where hs.hero_id = %s", heroid);
 
         TypedQuery<Object[]> query = entityManager.createQuery(q, Object[].class);
 
@@ -71,13 +67,8 @@ public class HeroServices {
         heroServiceRepository.save(createdService);
     }
 
-    public List<HeroServiceFeedDTO> getHeroServicesByServiceId(String serviceId) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, String> jsonMap = objectMapper.readValue((serviceId), Map.class);
-        int jsonServiceId = Integer.parseInt(jsonMap.get("service_id"));
-
-        String q = String.format("SELECT hs.id, hs.service_count, hs.image_url, hs.hero_id, hs.price, hs.description, hs.rating, hs.title, s.title from HeroService hs join Service s on hs.service_id.service_id = s.service_id where s.service_id = %s", jsonServiceId);
-
+    public List<HeroServiceFeedDTO> getHeroServicesByServiceId(int serviceId) throws JsonProcessingException {
+        String q = String.format("SELECT hs.id, hs.service_count, hs.image_url, hs.hero_id, hs.price, hs.description, hs.rating, hs.title, s.title from HeroService hs join Service s on hs.service_id.service_id = s.service_id where s.service_id = %s", serviceId);
         TypedQuery<Object[]> query = entityManager.createQuery(q, Object[].class);
 
         return getHeroServicesDTOS(query);
@@ -105,9 +96,12 @@ public class HeroServices {
         return heroServiceList;
     }
 
-    private static AvailabilityDTO getHeroAvailabilityById(int i) {
+    private static AvailabilityDTO[] getHeroAvailabilityById(int i) {
         //obtener del ms agenda con el id del heroe
-        return new AvailabilityDTO("2024-05-22", new int[]{1, 2, 3, 4, 5});
+        return new AvailabilityDTO[]{new AvailabilityDTO("2024-05-22", new int[]{1, 2, 3, 4, 5}),
+                new AvailabilityDTO("2024-05-23", new int[]{1, 2, 3, 4, 5}),
+                new AvailabilityDTO("2024-05-24", new int[]{1, 2, 3, 4, 5}),
+                new AvailabilityDTO("2024-05-26", new int[]{1, 2, 3, 4, 5})};
     }
 
     private static String getHeroNameById(int i) {

@@ -30,10 +30,7 @@ public class Services {
         if(Objects.equals(keyword, "")) {
             q = "SELECT s FROM Service s ORDER BY s.hero_quantity";
         }else {
-            ObjectMapper objectMapper = new ObjectMapper();
-            Map<String, String> jsonMap = objectMapper.readValue(keyword, Map.class);
-            String filterValue = jsonMap.get("filter");
-            q = String.format("SELECT s FROM Service s WHERE s.title LIKE '%%%s%%' ORDER BY s.hero_quantity", filterValue);
+            q = String.format("SELECT s FROM Service s WHERE s.title LIKE '%%%s%%' ORDER BY s.hero_quantity", keyword);
         }
         TypedQuery<Service> query = entityManager.createQuery(q, Service.class);
         return query.getResultList();

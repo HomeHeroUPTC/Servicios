@@ -17,7 +17,7 @@ public class HeroServiceFeedDTO {
     private String title;
     private String service_type;
     private String neighborhood;
-    private AvailabilityDTO availability;
+    private AvailabilityDTO[] availability;
 
 }
 
