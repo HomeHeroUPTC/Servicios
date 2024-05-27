@@ -11,6 +11,7 @@ import com.homehero.servicios.models.Service;
 import com.homehero.servicios.repositories.HeroServiceRepository;
 import com.homehero.servicios.repositories.ServiceRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
@@ -29,7 +30,6 @@ public class HeroServices {
     private HeroServiceRepository heroServiceRepository;
     @Autowired
     private ServiceRepository serviceRepository;
-
     @Autowired
     private RestTemplate restTemplate;
 
@@ -113,5 +113,30 @@ public class HeroServices {
     private String getHeroNeighborhoodById(int i) {
         String url = "https://msusuarios-zaewler4iq-uc.a.run.app/User/GetHeroNeighborhood?hero_id=" + i;
         return restTemplate.getForObject(url, String.class);
+    }
+
+    public String GetImgByHeroServiceId(int heroServiceId) {
+        String q = "SELECT h.image_url FROM HeroService h WHERE h.id = :heroServiceId";
+        TypedQuery<String> query = entityManager.createQuery(q, String.class);
+        query.setParameter("heroServiceId", heroServiceId);
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            // Manejar el caso en que no se encuentra ningún resultado
+            return null; // o lanzar una excepción personalizada
+        }
+    }
+
+    public String GetNameByHeroServiceId(int heroServiceId) {
+        String q = String.format("SELECT s.title from HeroService hs join Service s on hs.service_id.service_id = s.service_id where hs.id = %s", heroServiceId);
+        TypedQuery<String> query = entityManager.createQuery(q, String.class);
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            // Manejar el caso en que no se encuentra ningún resultado
+            return null; // o lanzar una excepción personalizada
+        }
     }
 }

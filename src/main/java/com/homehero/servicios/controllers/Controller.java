@@ -64,4 +64,23 @@ public class Controller {
         }
     }
 
+    @GetMapping(value = "/ImgByHeroServiceId")
+    public ResponseEntity<?> GetImgByHeroServiceId(@RequestParam int hero_service_id) {
+        try {
+            String img = heroServices.GetImgByHeroServiceId(hero_service_id);
+            return new ResponseEntity<>(img, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ErrorResponse("An error occurred while fetching services: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/NameByHeroServiceId")
+    public ResponseEntity<?> GetNameByHeroServiceId(@RequestParam int hero_service_id) {
+        try {
+            String img = heroServices.GetNameByHeroServiceId(hero_service_id);
+            return new ResponseEntity<>(img, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ErrorResponse("An error occurred while fetching services: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
