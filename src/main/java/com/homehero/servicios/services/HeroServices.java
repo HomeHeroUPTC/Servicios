@@ -13,6 +13,7 @@ import com.homehero.servicios.repositories.ServiceRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
@@ -28,6 +29,9 @@ public class HeroServices {
     private HeroServiceRepository heroServiceRepository;
     @Autowired
     private ServiceRepository serviceRepository;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     public List<HeroMyServicesDTO> getMyServices(int heroid) {
         String q = String.format("SELECT hs.id, hs.title, hs.image_url, hs.price, hs.description, s.title as type from HeroService hs JOIN Service s on hs.service_id.service_id = s.service_id where hs.hero_id = %s", heroid);
@@ -74,7 +78,7 @@ public class HeroServices {
         return getHeroServicesDTOS(query);
     }
 
-    private static List<HeroServiceFeedDTO> getHeroServicesDTOS(TypedQuery<Object[]> query) {
+    private List<HeroServiceFeedDTO> getHeroServicesDTOS(TypedQuery<Object[]> query) {
         List<Object[]> results = query.getResultList();
 
         List<HeroServiceFeedDTO> heroServiceList = new ArrayList<>();
@@ -96,21 +100,18 @@ public class HeroServices {
         return heroServiceList;
     }
 
-    private static AvailabilityDTO[] getHeroAvailabilityById(int i) {
-        //obtener del ms agenda con el id del heroe
-        return new AvailabilityDTO[]{new AvailabilityDTO("2024-05-22", new int[]{1, 2, 3, 4, 5}),
-                new AvailabilityDTO("2024-05-23", new int[]{1, 2, 3, 4, 5}),
-                new AvailabilityDTO("2024-05-24", new int[]{1, 2, 3, 4, 5}),
-                new AvailabilityDTO("2024-05-26", new int[]{1, 2, 3, 4, 5})};
+    private AvailabilityDTO[] getHeroAvailabilityById(int i) {
+        String url = "https://msagenda-zaewler4iq-uc.a.run.app/Agenda/GetAvailableHeroDays?hero_id=" + i;
+        return restTemplate.getForObject(url, AvailabilityDTO[].class);
     }
 
-    private static String getHeroNameById(int i) {
-        //obtener del ms usuarios con el id del heroe
-        return "LpZ ";
+    private String getHeroNameById(int i) {
+        String url = "https://msusuarios-zaewler4iq-uc.a.run.app/User/GetHeroName?hero_id=" + i;
+        return restTemplate.getForObject(url, String.class);
     }
 
-    private static String getHeroNeighborhoodById(int i) {
-        //obtener del ms usuarios con el id del heroe
-        return "The Farm ";
+    private String getHeroNeighborhoodById(int i) {
+        String url = "https://msusuarios-zaewler4iq-uc.a.run.app/User/GetHeroNeighborhood?hero_id=" + i;
+        return restTemplate.getForObject(url, String.class);
     }
 }
