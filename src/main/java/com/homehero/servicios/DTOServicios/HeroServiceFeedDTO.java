@@ -8,6 +8,7 @@ import lombok.Setter;
 public class HeroServiceFeedDTO {
 
     private int id;
+    private int hero_service_id;
     private int service_count;
     private String image_url;
     private String hero_name;

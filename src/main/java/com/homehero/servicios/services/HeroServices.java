@@ -1,7 +1,6 @@
 package com.homehero.servicios.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.homehero.servicios.DTOServicios.AvailabilityDTO;
 import com.homehero.servicios.DTOServicios.HeroMyServicesDTO;
 import com.homehero.servicios.DTOServicios.HeroServiceDTO;
@@ -87,8 +86,9 @@ public class HeroServices {
             dto.setAvailability(getHeroAvailabilityById((int) result[3]));
             dto.setHero_name(getHeroNameById((int) result[3]));
             dto.setNeighborhood(getHeroNeighborhoodById((int) result[3]));
+            dto.setHero_service_id((int) result[0]);
             dto.setService_count((int) result[1]);
-            dto.setId((int) result[0]);
+            dto.setId((int) result[3]);
             dto.setTitle((String) result[7]);
             dto.setImage_url((String) result[2]);
             dto.setPrice((int) result[4]);
@@ -123,8 +123,7 @@ public class HeroServices {
         try {
             return query.getSingleResult();
         } catch (NoResultException e) {
-            // Manejar el caso en que no se encuentra ningún resultado
-            return null; // o lanzar una excepción personalizada
+            return null;
         }
     }
 
